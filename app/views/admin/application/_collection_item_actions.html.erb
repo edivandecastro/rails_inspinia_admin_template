@@ -1,0 +1,29 @@
+<td>
+  <div class="btn-group">
+      <button data-toggle="dropdown" class="btn btn-warning btn-sm dropdown-toggle">Ações</button>
+      <ul class="dropdown-menu">
+          <li>
+            <%= link_to(
+              [:edit, namespace, resource],
+              class: "button",
+            ) do %>
+              <i class="fa fa-edit"></i>
+              <%= t("administrate.actions.edit_resource", name: page.resource_name) %>
+            <% end if accessible_action?(resource, :edit) %>
+          </li>
+          <li>
+            <%= link_to(
+              [namespace, resource],
+              class: "dropdown-item",
+              method: :delete,
+              data: { confirm: t("administrate.actions.confirm") }
+            ) do %>
+              <i class="fa fa-trash"></i>
+              <%= t("administrate.actions.destroy") %>
+            <% end if accessible_action?(resource, :destroy) %>
+          </li>
+          <li class="dropdown-divider"></li>
+          <li><a class="dropdown-item" href="#">Desativar</a></li>
+      </ul>
+  </div>
+</td>

@@ -1,0 +1,108 @@
+<%#
+# Collection
+
+This partial is used on the `index` and `show` pages
+to display a collection of resources in an HTML table.
+
+## Local variables:
+
+- `collection_presenter`:
+  An instance of [Administrate::Page::Collection][1].
+  The table presenter uses `ResourceDashboard::COLLECTION_ATTRIBUTES` to determine
+  the columns displayed in the table
+- `resources`:
+  An ActiveModel::Relation collection of resources to be displayed in the table.
+  By default, the number of resources is limited by pagination
+  or by a hard limit to prevent excessive page load times
+
+[1]: http://www.rubydoc.info/gems/administrate/Administrate/Page/Collection
+%>
+
+<div class="ibox ">
+  <div class="ibox-title">
+    <h5>Tabela de <%= resource_name %></h5>
+    <div class="ibox-tools" style="margin-top: -8px;">
+      <%= link_to( [:new, namespace, page.resource_path.to_sym]) do %>
+        <button class="btn btn-info" type="button">
+          <i class="fa fa-plus"></i>&nbsp;
+          <%=
+            t(
+              "administrate.actions.new_resource",
+              name: display_resource_name(page.resource_name, singular: true).downcase
+            )
+          %>
+        </button>
+      <% end if accessible_action?(new_resource, :new) %>
+      <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+        <i class="fa fa-wrench"></i>
+      </a>
+      <ul class="dropdown-menu dropdown-user">
+        <li><a href="#" class="dropdown-item">Config option 1</a>
+        </li>
+        <li><a href="#" class="dropdown-item">Config option 2</a>
+        </li>
+      </ul>
+      <a class="collapse-link">
+        <i class="fa fa-chevron-up"></i>
+      </a>
+    </div>
+  </div>
+  <div class="ibox-content">
+    <table class="table <%= table_title %>">
+      <thead>
+        <tr>
+          <% collection_presenter.attribute_types.each do |attr_name, attr_type| %>
+            <th>
+              <%= link_to(sanitized_order_params(page, collection_field_name).merge(
+                collection_presenter.order_params_for(attr_name, key: collection_field_name)
+              )) do %>
+                <%= t(
+                  "helpers.label.#{collection_presenter.resource_name}.#{attr_name}",
+                  default: resource_class.human_attribute_name(attr_name)
+                ).titleize %>
+                <% if collection_presenter.ordered_by?(attr_name) %>
+                  <i class="fa fa-sort-amount-<%= collection_presenter.ordered_html_class(attr_name) %>"></i>
+                <% else %>
+                  <i class="fa fa-arrows-v"></i>
+                <% end %>
+              <% end %>
+            </th>
+          <% end %>
+          <%= render(
+            "collection_header_actions",
+            collection_presenter: collection_presenter,
+            page: page,
+            resources: resources,
+            table_title: "page-title"
+          ) %>
+        </tr>
+      </thead>
+      <tbody>
+      <% resources.each do |resource| %>
+        <tr>
+          <% collection_presenter.attributes_for(resource).each do |attribute| %>
+            <td>
+              <a href="<%= polymorphic_path([namespace, resource]) -%>"
+                 tabindex="-1"
+                 class="action-show"
+              >
+                <%= render_field attribute %>
+              </a>
+            </td>
+          <% end %>
+
+          <%= render(
+            "collection_item_actions",
+            collection_presenter: collection_presenter,
+            collection_field_name: collection_field_name,
+            page: page,
+            namespace: namespace,
+            resource: resource,
+            table_title: "page-title"
+          ) %>
+        </tr>
+      <% end %>
+      </tbody>
+    </table>
+  </div>
+</div>
