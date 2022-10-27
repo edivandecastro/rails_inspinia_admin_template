@@ -9,9 +9,9 @@
                     Atlas
                 </div>
             </li>
-            <li class="<%= 'active' if current_page?('/') %>">
-                <%= link_to "/" do %>
-                <i class="fa fa-laptop"></i> <span class="nav-label">Main page</span>
+            <li class="<%= 'active' if current_page?(admin_products_path) %>">
+                <%= link_to admin_products_path do %>
+                    <i class="fa fa-laptop"></i> <span class="nav-label">Products</span>
                 <% end %>
             </li>
             <li class="<%= 'active' if current_page?('/home/minor') %>">
